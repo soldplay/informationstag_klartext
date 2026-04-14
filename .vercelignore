@@ -1,0 +1,5 @@
+# Gleiche Quelldateien wie in .gitignore: nicht zum Vercel-Upload / Build-Kontext
+# (bei Deploy aus Git sind sie ohnehin nicht im Repo, falls sie per .gitignore fehlen.)
+
+/uebungen_bootcamp.pdf
+/ki_kurs_bootcamp_1week.pdf

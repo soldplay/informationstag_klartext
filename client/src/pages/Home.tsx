@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { QRCodeSVG } from "qrcode.react";
 import { Link } from "wouter";
+import { WhatsAppQrBlock } from "@/components/WhatsAppQrBlock";
+import { WHATSAPP_GROUP_URL } from "@/constants/whatsapp";
 import {
   ArrowRight,
   BadgeCheck,
@@ -55,8 +56,6 @@ type Slide = {
 };
 
 const REGISTRATION_URL = "https://klartext.example/anmeldung";
-/** WhatsApp-Gruppe „Infotag / Bootcamp“ — einziger QR auf der Abschlussfolie */
-const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/EJsa6MevCVbLewV6mvjEq0";
 
 // Audio: client/public/audio/klartext-ambient.mp3
 const AUDIO_SRC = "/audio/klartext-ambient.mp3";
@@ -114,7 +113,7 @@ const slides: Slide[] = [
       {
         title: "Anmeldung per QR-Code direkt vor Ort",
         body:
-          "Auf der letzten QR-Folie findet ihr einen Code für die WhatsApp-Gruppe zum Infotag/Bootcamp — dort könnt ihr euch eintragen und austauschen. Die Kursbeschreibung nennt zudem die Bootcamp-Gebühr (600 € pro Teilnehmer laut PDF) und die enthaltenen Leistungen: Materialien (Prompt-Baukasten, Vorlagen, Checklisten), betreute Übungen mit Feedback und ein nutzbares Abschlussportfolio.",
+          "Auf der letzten QR-Folie findet ihr einen Code für die WhatsApp-Gruppe zum Infotag/Bootcamp — dort könnt ihr euch eintragen und austauschen. Die Kursbeschreibung nennt zudem die Bootcamp-Gebühr (690 € pro Teilnehmer) und die enthaltenen Leistungen: Materialien (Prompt-Baukasten, Vorlagen, Checklisten), betreute Übungen mit Feedback und ein nutzbares Abschlussportfolio.",
       },
     ],
   },
@@ -447,8 +446,17 @@ export default function Home() {
       </div>
 
       <div className="fixed left-0 top-0 z-50 flex w-full flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 md:px-8 md:py-4">
-        <div className="max-w-full truncate rounded-full border border-white/10 bg-slate-900/60 px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sky-100 backdrop-blur-xl sm:px-4 sm:text-xs md:text-sm">
-          KLARTEXT! • KI Navigator Kurs
+        <div className="flex w-full flex-wrap items-center gap-2 sm:max-w-none sm:gap-3">
+          <div className="max-w-full truncate rounded-full border border-white/10 bg-slate-900/60 px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sky-100 backdrop-blur-xl sm:px-4 sm:text-xs md:text-sm">
+            KLARTEXT! • KI Navigator Kurs
+          </div>
+          <Link
+            href="/informationstag-praesentation"
+            className="inline-flex max-w-full items-center gap-2 truncate rounded-full border border-sky-300/25 bg-sky-500/15 px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.12em] text-sky-50 backdrop-blur-xl transition hover:border-sky-200/40 hover:bg-sky-500/25 sm:px-4 sm:text-xs md:text-sm"
+          >
+            <Presentation className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+            Informationstag Präsentation
+          </Link>
         </div>
 
         <div className="flex shrink-0 items-center gap-2 self-end sm:self-auto">
@@ -759,28 +767,12 @@ export default function Home() {
                         }`}
                       >
                         {slide.qr.map((item) => (
-                          <div
+                          <WhatsAppQrBlock
                             key={item.label}
-                            className="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur-xl"
-                          >
-                            <div className="mb-4 flex items-center gap-3">
-                              <div className="rounded-2xl bg-sky-300/15 p-2 text-sky-200">
-                                <QrCode className="h-5 w-5" />
-                              </div>
-                              <div>
-                                <div className="text-lg font-bold text-white">{item.label}</div>
-                                <div className="text-sm text-slate-200/80">{item.caption}</div>
-                              </div>
-                            </div>
-                            <div className="inline-flex max-w-full rounded-2xl bg-white p-2 shadow-2xl shadow-slate-950/20 sm:p-3">
-                              <QRCodeSVG
-                                value={item.value}
-                                size={slide.qr?.length === 1 ? 200 : 168}
-                                includeMargin
-                              />
-                            </div>
-                            <div className="mt-4 break-all text-sm text-sky-100/85">{item.value}</div>
-                          </div>
+                            label={item.label}
+                            caption={item.caption}
+                            size={slide.qr?.length === 1 ? 200 : 168}
+                          />
                         ))}
                       </div>
                     ) : null}

@@ -113,7 +113,7 @@ export default function KursInfo() {
             Investition (laut Kursunterlage)
           </h2>
           <p className="rounded-2xl border border-sky-200/15 bg-sky-950/30 p-5 text-sm text-sky-100 sm:text-base">
-            Beispiel aus dem Planungs-PDF: <strong className="text-white">600&nbsp;€</strong> pro
+            Kursgebühr: <strong className="text-white">690&nbsp;€</strong> pro
             Teilnehmer für die einwöchige Intensivwoche — inkl. begleiteter Praxis und Portfolio-Fokus.
             Endgültige Konditionen bitte direkt bei KLARTEXT! anfragen.
           </p>

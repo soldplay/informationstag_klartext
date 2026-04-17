@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "wouter";
+import { AmbientAudioControls } from "@/components/AmbientAudioControls";
 import { WhatsAppQrBlock } from "@/components/WhatsAppQrBlock";
 import { WHATSAPP_GROUP_URL } from "@/constants/whatsapp";
 import {
@@ -14,14 +15,11 @@ import {
   ImageIcon,
   LayoutDashboard,
   MessageSquareText,
-  Music4,
-  Pause,
+  MessageCircleQuestion,
   Presentation,
   QrCode,
   Sparkles,
   Users,
-  Volume2,
-  VolumeX,
   Wand2,
   Workflow,
   LucideIcon,
@@ -56,9 +54,6 @@ type Slide = {
 };
 
 const REGISTRATION_URL = "https://klartext.example/anmeldung";
-
-// Audio: client/public/audio/klartext-ambient.mp3
-const AUDIO_SRC = "/audio/klartext-ambient.mp3";
 
 const slides: Slide[] = [
   {
@@ -362,11 +357,8 @@ const iconMotion = {
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const [videoLoadFailed, setVideoLoadFailed] = useState(false);
   const [agendaOpenIndex, setAgendaOpenIndex] = useState<number | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const slide = slides[currentSlide];
   const progress = useMemo(
@@ -383,47 +375,9 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() === "m") setIsMuted((prev) => !prev);
-      if (event.key === " ") {
-        event.preventDefault();
-        toggleAudio();
-      }
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
-
-  useEffect(() => {
-    if (!audioRef.current) return;
-    audioRef.current.loop = true;
-    audioRef.current.muted = isMuted;
-  }, [isMuted]);
-
-  useEffect(() => {
-    if (!audioRef.current) return;
-
-    if (isAudioPlaying) {
-      audioRef.current
-        .play()
-        .then(() => undefined)
-        .catch(() => {
-          setIsAudioPlaying(false);
-        });
-    } else {
-      audioRef.current.pause();
-    }
-  }, [isAudioPlaying]);
-
-  useEffect(() => {
     setVideoLoadFailed(false);
     setAgendaOpenIndex(null);
   }, [slide.id]);
-
-  const toggleAudio = () => {
-    setIsAudioPlaying((prev) => !prev);
-  };
 
   const toggleAgendaItem = (index: number) => {
     setAgendaOpenIndex((prev) => (prev === index ? null : index));
@@ -433,8 +387,6 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
-      <audio ref={audioRef} src={AUDIO_SRC} loop playsInline preload="auto" />
-
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(125,211,252,0.12),transparent_30%)]" />
 
       <div className="absolute left-0 top-0 z-40 h-1.5 w-full bg-white/10">
@@ -457,24 +409,17 @@ export default function Home() {
             <Presentation className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
             Informationstag Präsentation
           </Link>
+          <Link
+            href="/infotag-fragen"
+            className="inline-flex max-w-full items-center gap-2 truncate rounded-full border border-white/15 bg-white/8 px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.12em] text-white/90 backdrop-blur-xl transition hover:border-white/25 hover:bg-white/15 sm:px-4 sm:text-xs md:text-sm"
+          >
+            <MessageCircleQuestion className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+            Fragen &amp; Antworten
+          </Link>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2 self-end sm:self-auto">
-          <button
-            onClick={toggleAudio}
-            className="flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-xl transition hover:bg-white/20"
-          >
-            {isAudioPlaying ? <Pause className="h-4 w-4" /> : <Music4 className="h-4 w-4" />}
-            {isAudioPlaying ? "Musik pausieren" : "Musik starten"}
-          </button>
-
-          <button
-            onClick={() => setIsMuted((prev) => !prev)}
-            className="rounded-full border border-white/10 bg-white/10 p-2 text-white/90 backdrop-blur-xl transition hover:bg-white/20"
-            aria-label={isMuted ? "Ton aktivieren" : "Ton stummschalten"}
-          >
-            {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-          </button>
+        <div className="flex shrink-0 flex-col items-end gap-2 self-end sm:flex-row sm:items-center sm:self-auto">
+          <AmbientAudioControls spaceTogglesPlayback />
         </div>
       </div>
 

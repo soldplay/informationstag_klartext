@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, BrainCircuit, Calendar, Euro, Sparkles, Users } from "lucide-react";
+import { ArrowLeft, BrainCircuit, Calendar, Euro, MessageCircleQuestion, Sparkles, Users } from "lucide-react";
 import { Link } from "wouter";
 
 export default function KursInfo() {
@@ -119,13 +119,20 @@ export default function KursInfo() {
           </p>
         </section>
 
-        <div className="mt-12 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Link
             href="/"
             className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/10 px-6 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/20"
           >
             <ArrowLeft className="h-4 w-4" />
             Zur Präsentation
+          </Link>
+          <Link
+            href="/infotag-fragen"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-sky-400/25 bg-sky-500/15 px-6 py-3 text-center text-sm font-semibold text-sky-100 transition hover:bg-sky-500/25"
+          >
+            <MessageCircleQuestion className="h-4 w-4" />
+            Fragen &amp; Antworten (Infotag)
           </Link>
         </div>
       </main>

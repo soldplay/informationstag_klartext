@@ -1,4 +1,5 @@
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { AmbientAudioControls } from "@/components/AmbientAudioControls";
 import {
   AnimatePresence,
   motion,
@@ -27,6 +28,7 @@ import {
   Lightbulb,
   LineChart,
   LucideIcon,
+  MessageCircleQuestion,
   Monitor,
   Palette,
   PartyPopper,
@@ -659,7 +661,13 @@ export default function InformationstagPresentation() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") {
+      if (e.key === "ArrowRight" || e.key === "Enter") {
+        e.preventDefault();
+        advance();
+      }
+      if (e.key === " ") {
+        const t = e.target as HTMLElement | null;
+        if (t?.closest?.('[role="group"][aria-label="Hintergrundmusik"]')) return;
         e.preventDefault();
         advance();
       }
@@ -714,12 +722,46 @@ export default function InformationstagPresentation() {
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
+          const t = e.target as HTMLElement | null;
+          if (t?.closest?.('[aria-label="Hintergrundmusik"]')) return;
           e.preventDefault();
           advance();
         }
       }}
       aria-label="Klicken oder Leertaste für nächsten Schritt"
     >
+      {/* Außerhalb der Folien-Animation: sonst wird &lt;audio&gt; bei jedem Folienwechsel zerstört */}
+      <header
+        className="fixed left-0 right-0 top-0 z-50 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-black/55 px-4 py-3 backdrop-blur-xl sm:px-6 md:px-10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/40 px-3 py-2 text-xs font-bold uppercase tracking-wider text-white/90 backdrop-blur-xl transition hover:bg-white/10"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Start
+          </Link>
+          <span className="rounded-full border border-white/15 bg-white/5 px-3 py-2 text-[0.65rem] font-extrabold uppercase tracking-[0.22em] text-white/80">
+            KLARTEXT! · Info-Tag
+          </span>
+          <Link
+            href="/infotag-fragen"
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-white/90 backdrop-blur-xl transition hover:bg-white/15 sm:text-xs"
+          >
+            <MessageCircleQuestion className="h-3.5 w-3.5" />
+            Q&amp;A
+          </Link>
+        </div>
+        <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:max-w-lg sm:items-end">
+          <AmbientAudioControls />
+          <div className="text-right text-[0.7rem] font-bold uppercase tracking-[0.2em] text-white/55 sm:text-xs">
+            Live-Präsentation
+          </div>
+        </div>
+      </header>
+
       <AnimatePresence mode="wait" custom={direction}>
         <motion.div
           key={current.id}
@@ -729,32 +771,11 @@ export default function InformationstagPresentation() {
           animate="center"
           exit="exit"
           transition={tSlide}
-          className="relative flex min-h-screen flex-col"
+          className="relative flex min-h-screen flex-col pt-36 sm:pt-32 md:pt-28"
         >
           <SlideBackdrop theme={current.theme} slideIndex={slideIndex} />
 
-          <header
-            className="relative z-20 flex flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6 md:px-10"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex flex-wrap items-center gap-2">
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/40 px-3 py-2 text-xs font-bold uppercase tracking-wider text-white/90 backdrop-blur-xl transition hover:bg-white/10"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Start
-              </Link>
-              <span className="rounded-full border border-white/15 bg-white/5 px-3 py-2 text-[0.65rem] font-extrabold uppercase tracking-[0.22em] text-white/80">
-                KLARTEXT! · Info-Tag
-              </span>
-            </div>
-            <div className="text-right text-[0.7rem] font-bold uppercase tracking-[0.2em] text-white/55 sm:text-xs">
-              Live-Präsentation
-            </div>
-          </header>
-
-          <main className="relative z-10 flex flex-1 flex-col justify-center px-4 pb-40 pt-4 sm:px-8 md:px-14 md:pb-44 lg:px-20">
+          <main className="relative z-10 flex flex-1 flex-col justify-center px-4 pb-40 pt-2 sm:px-8 md:px-14 md:pb-44 lg:px-20">
             <div className="mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-[1fr_1.15fr] lg:items-center lg:gap-16">
               {/* Linke Spalte: erste große Elemente stacken */}
               <div className="flex flex-col gap-8 lg:min-h-[32rem]">
